@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArsipController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,4 +17,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+
+Route::group(['prefix' => 'Arsip'], function(){
+    Route::get('get-data', [ArsipController::class, 'getDataIndex'])->name('arsip.getData');
+    Route::post('store', [ArsipController::class, 'store'])->name('arsip.store');
+    Route::get('detail/{id}', [ArsipController::class, 'detail'])->name('arsip.detail');
+    Route::delete('delete/{id}', [ArsipController::class, 'destroy'])->name('arsip.delete');
 });

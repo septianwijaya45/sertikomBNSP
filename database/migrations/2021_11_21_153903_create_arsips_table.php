@@ -18,6 +18,7 @@ class CreateArsipsTable extends Migration
             $table->string('nomor_surat');
             $table->string('kategori');
             $table->text('judul');
+            $table->string('arsip');
             $table->timestamps();
         });
     }

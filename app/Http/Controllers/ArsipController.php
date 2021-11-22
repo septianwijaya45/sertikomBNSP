@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Arsip;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -12,14 +13,17 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 class ArsipController extends Controller
 {
     function getDataIndex(Request $request){
-        $data = Arsip::all();
+        $data = DB::select("
+            SELECT id, nomor_surat, kategori, judul,created_at
+            FROM arsips
+        ");
         if($request->ajax()){
             return \DataTables::of($data)
                         ->addColumn('Actions', function($data){
                             return '
                             <button class="btn btn-danger btn-sm " onClick="confirmDelete('.$data->id.')">Hapus</button>
                             <a href="Arsip/unduh-data/'.$data->id.'"><button class="btn btn-warning btn-sm">Unduh</button></a>
-                            <a href="Arsip/detail-data/'.$data->id.'"><button class="btn btn-warning btn-sm">Lihat >></button></a>
+                            <a href="Arsip/detail-data/'.$data->id.'"><button class="btn btn-primary btn-sm">Lihat >></button></a>
                         ';
                         })
                         ->rawColumns(['Actions'])
@@ -108,5 +112,31 @@ class ArsipController extends Controller
         } catch (\Exception $e) {
              throw new HttpException(500, $e->getMessage());
         }
+    }
+
+
+    function search(Request $request, $judul){
+        $arsip = DB::select("
+            SELECT id, nomor_surat, kategori, judul, created_at
+            FROM arsips
+            WHERE judul LIKE '%{$judul}%'
+        ");
+        if($request->ajax()){
+            return \DataTables::of($arsip)
+                        ->addColumn('Actions', function($arsip){
+                            return '
+                            <button class="btn btn-danger btn-sm " onClick="confirmDelete('.$arsip->id.')">Hapus</button>
+                            <a href="Arsip/unduh-data/'.$arsip->id.'"><button class="btn btn-warning btn-sm">Unduh</button></a>
+                            <a href="Arsip/detail-data/'.$arsip->id.'"><button class="btn btn-primary btn-sm">Lihat >></button></a>
+                        ';
+                        })
+                        ->rawColumns(['Actions'])
+                        ->addIndexColumn()
+                        ->make(true);
+        }
+        // return response()->json([
+        //     'messages'      => 'Success',
+        //     'data'          => $arsip
+        // ]);
     }
 }

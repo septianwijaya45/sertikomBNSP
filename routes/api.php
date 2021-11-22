@@ -24,4 +24,6 @@ Route::group(['prefix' => 'Arsip'], function(){
     Route::post('store', [ArsipController::class, 'store'])->name('arsip.store');
     Route::get('detail/{id}', [ArsipController::class, 'detail'])->name('arsip.detail');
     Route::delete('delete/{id}', [ArsipController::class, 'destroy'])->name('arsip.delete');
+    // Search Data
+    Route::get('search-data/{judul}', [ArsipController::class, 'search'])->name('arsip.search');
 });

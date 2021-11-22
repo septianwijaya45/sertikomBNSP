@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AboutController;
 use App\Http\Controllers\ArsipController;
 use Illuminate\Support\Facades\Route;
 
@@ -15,3 +16,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [ArsipController::class, 'index'])->name('arsip.index');
+Route::get('/insert-data', [ArsipController::class, 'insert'])->name('arsip.insert');
+Route::get('about', [AboutController::class, 'index'])->name('about');

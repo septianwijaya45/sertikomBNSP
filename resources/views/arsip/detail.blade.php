@@ -21,10 +21,10 @@
                 <a href="{{route('arsip.index')}}">
                     <button class="btn btn-primary"><<  Kembali</button>
                 </a>
-                <a href="{{route('arsip.download', $arsip->id)}}">
+                <a href="{{route('arsip.download', $arsip->file)}}">
                     <button class="btn btn-warning">Unduh</button>
                 </a>
-                <a href="#">
+                <a href="{{route('arsip.edit', $arsip->id)}}">
                     <button class="btn btn-light">Edit/Ganti File</button>
                 </a>
             </div>

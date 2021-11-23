@@ -1,4 +1,4 @@
-@extends('layouts.index', ['title' => 'Arsip Laporan'])
+@extends('layouts.index', ['title' => 'Arsip '.$arsip->judul])
 
 @section('content')
 <div class="content-wrapper">
@@ -6,7 +6,7 @@
     <div class="col-md-12 grid-margin">
         <div class="row">
             <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-                <h3 class="font-weight-bold">Arsip Surat  >>  Unggah</h3>
+                <h3 class="font-weight-bold">Arsip Surat  >>  Edit</h3>
                 <h6 class="font-weight-normal mb-0">Unggah arsip yang telah terbit pada form ini untuk diarsipkan</h6>
                 <h6 class="font-weight-normal mb-0">Catatan: </h6>
                 <h6 class="font-weight-normal mb-0">
@@ -21,8 +21,9 @@
             <div class="col-md-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                  <form class="forms-sample" method="post" enctype="multipart/form-data" id="formTambahData">
+                  <form class="forms-sample" method="post" enctype="multipart/form-data" id="formEditData">
                       @csrf
+                      <input type="text" value="{{$arsip->id}}" name="id" hidden>
                     <div class="row" id="error_message">
                     </div>
                     <div class="form-group">
@@ -31,7 +32,7 @@
                                   <label for="nomor_surat">Nomor Surat</label>
                               </div>
                               <div class="col-md-10">
-                                  <input type="text" class="form-control" name="nomor_surat" id="nomor_surat" placeholder="Nomor Surat">
+                                  <input type="text" class="form-control" name="nomor_surat" id="nomor_surat" placeholder="Nomor Surat" value="{{$arsip->nomor_surat}}">
                               </div>
                           </div>
                     </div>
@@ -43,10 +44,10 @@
                             <div class="col-md-10">
                                 <select name="kategori" id="kategori" class="form-control">
                                     <option value="" disabled selected> --- Pilih Kategori Surat --- </option>
-                                    <option value="Undangan">Undangan</option>
-                                    <option value="Pengumuman">Pengumuman</option>
-                                    <option value="Nota Dinas">Nota Dinas</option>
-                                    <option value="Pemberitahuan">Pemberitahuan</option>
+                                    <option value="Undangan" @if($arsip->kategori == 'Undangan') selected @endif>Undangan</option>
+                                    <option value="Pengumuman" @if($arsip->kategori == 'Pengumuman') selected @endif>Pengumuman</option>
+                                    <option value="Nota Dinas" @if($arsip->kategori == 'Nota Dinas') selected @endif>Nota Dinas</option>
+                                    <option value="Pemberitahuan" @if($arsip->kategori == 'Pemberitahuan') selected @endif>Pemberitahuan</option>
                                 </select>
                             </div>
                         </div>
@@ -57,7 +58,7 @@
                                   <label for="judul">Judul</label>
                               </div>
                               <div class="col-md-10">
-                                  <input type="text" class="form-control" name="judul" id="judul" placeholder="Judul">
+                                  <input type="text" class="form-control" name="judul" id="judul" placeholder="Judul" value="{{$arsip->judul}}">
                               </div>
                           </div>
                     </div>
@@ -67,8 +68,9 @@
                                 <label>File upload</label>
                             </div>
                             <div class="col-md-10">
+                                <a href="{{route('arsip.download', $arsip->file)}}">{{$arsip->file}}</a>
                                 <div class="input-group col-xs-12">
-                                  <input type="file" class="form-control" name="file"  placeholder="Upload File">
+                                  <input type="file" class="form-control" name="file"  placeholder="Upload File" >
                                   <span class="input-group-append">
                                     <button class="btn btn-primary" type="button">Upload</button>
                                   </span>
@@ -91,8 +93,9 @@
 @stop
 
 @section('footer')
+
 <script type="text/javascript">
-    $('#formTambahData').on('submit', function(e) {
+    $('#formEditData').on('submit', function(e) {
         e.preventDefault();
         $.ajaxSetup({
             headers: {
@@ -100,7 +103,7 @@
             }
         });
         $.ajax({
-            url: "{{ route('arsip.store') }}",
+            url: "{{ route('arsip.update') }}",
             method: "POST",
             data: new FormData(this),
             dataType: 'JSON',
@@ -129,10 +132,14 @@
                     })
                 }
             },
-            error: function(error) {
+            error: function(req,status,error) {
+                console.log(status+' '+error);
                 $('#error_message').append(
                             '<div class="col-md-3"><div class="alert alert-danger">' +
                             error + '</div></div>')
+                setInterval(function() {
+                    $('#error_message').empty();
+                }, 4000);
             }
         });
     });

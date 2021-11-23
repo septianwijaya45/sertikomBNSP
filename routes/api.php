@@ -22,8 +22,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::group(['prefix' => 'Arsip'], function(){
     Route::get('get-data', [ArsipController::class, 'getDataIndex'])->name('arsip.getData');
     Route::post('store', [ArsipController::class, 'store'])->name('arsip.store');
-    Route::get('detail/{id}', [ArsipController::class, 'detail'])->name('arsip.detail');
     Route::delete('delete/{id}', [ArsipController::class, 'destroy'])->name('arsip.delete');
+    Route::post('update', [ArsipController::class, 'update'])->name('arsip.update');
     // Search Data
     Route::get('search-data/{judul}', [ArsipController::class, 'search'])->name('arsip.search');
     // Unduh Data

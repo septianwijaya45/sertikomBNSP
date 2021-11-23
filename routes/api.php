@@ -26,4 +26,6 @@ Route::group(['prefix' => 'Arsip'], function(){
     Route::delete('delete/{id}', [ArsipController::class, 'destroy'])->name('arsip.delete');
     // Search Data
     Route::get('search-data/{judul}', [ArsipController::class, 'search'])->name('arsip.search');
+    // Unduh Data
+    Route::get('download-arsip/{file}', [ArsipController::class, 'download'])->name('arsip.download');
 });

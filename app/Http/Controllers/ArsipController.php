@@ -14,7 +14,7 @@ class ArsipController extends Controller
 {
     function getDataIndex(Request $request){
         $data = DB::select("
-            SELECT id, nomor_surat, kategori, judul,created_at
+            SELECT id, nomor_surat, kategori, judul, file, created_at
             FROM arsips
         ");
         if($request->ajax()){
@@ -22,8 +22,8 @@ class ArsipController extends Controller
                         ->addColumn('Actions', function($data){
                             return '
                             <button class="btn btn-danger btn-sm " onClick="confirmDelete('.$data->id.')">Hapus</button>
-                            <a href="Arsip/unduh-data/'.$data->id.'"><button class="btn btn-warning btn-sm">Unduh</button></a>
-                            <a href="Arsip/detail-data/'.$data->id.'"><button class="btn btn-primary btn-sm">Lihat >></button></a>
+                            <a href="'.route('arsip.download', $data->file).'"><button class="btn btn-warning btn-sm">Unduh</button></a>
+                            <a href="'.route('arsip.detail', $data->id).'"><button class="btn btn-primary btn-sm">Lihat >></button></a>
                         ';
                         })
                         ->rawColumns(['Actions'])
@@ -89,11 +89,11 @@ class ArsipController extends Controller
         $arsip = Arsip::where('id', $id)->first();
 
         // test backend postman
-        return response()->json([
-            'message'       => 'Success',
-            'data'          => $arsip
-        ]);
-        // return view('Arsip.detail', compact(['arsip']));
+        // return response()->json([
+        //     'message'       => 'Success',
+        //     'data'          => $arsip
+        // ]);
+        return view('Arsip.detail', compact(['arsip']));
     }
 
     function destroy($id){
@@ -117,7 +117,7 @@ class ArsipController extends Controller
 
     function search(Request $request, $judul){
         $arsip = DB::select("
-            SELECT id, nomor_surat, kategori, judul, created_at
+            SELECT id, nomor_surat, kategori, judul, file, created_at
             FROM arsips
             WHERE judul LIKE '%{$judul}%'
         ");
@@ -138,5 +138,9 @@ class ArsipController extends Controller
         //     'messages'      => 'Success',
         //     'data'          => $arsip
         // ]);
+    }
+
+    function download($file){
+        return response()->download(public_path('berkas/'.$file));
     }
 }
